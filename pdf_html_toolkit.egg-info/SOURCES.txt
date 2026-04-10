@@ -1,0 +1,16 @@
+MANIFEST.in
+README.md
+convert_pdfs_to_html.py
+environment.txt
+pyproject.toml
+render_rules.json
+requirements.txt
+pdf_html_toolkit/__init__.py
+pdf_html_toolkit/__main__.py
+pdf_html_toolkit/render_rules.json
+pdf_html_toolkit.egg-info/PKG-INFO
+pdf_html_toolkit.egg-info/SOURCES.txt
+pdf_html_toolkit.egg-info/dependency_links.txt
+pdf_html_toolkit.egg-info/entry_points.txt
+pdf_html_toolkit.egg-info/requires.txt
+pdf_html_toolkit.egg-info/top_level.txt

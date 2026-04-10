@@ -1,0 +1,5 @@
+include README.md
+include requirements.txt
+include environment.txt
+include render_rules.json
+recursive-include pdf_html_toolkit *.json

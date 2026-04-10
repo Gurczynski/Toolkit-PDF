@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pdf-html-toolkit"
+version = "0.1.0"
+description = "Convert PDFs into accessible HTML replicas with inline CSS, JavaScript, transcripts, and WCAG-oriented viewer features."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "PyMuPDF==1.26.4",
+  "pypdf==4.3.1",
+]
+keywords = ["pdf", "html", "accessibility", "wcag", "ada", "conversion"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Operating System :: OS Independent",
+  "Topic :: Text Processing :: Markup :: HTML",
+  "Topic :: Multimedia :: Graphics :: Graphics Conversion",
+]
+
+[project.scripts]
+pdf-html-toolkit = "pdf_html_toolkit.__main__:main"
+
+[tool.setuptools]
+py-modules = ["convert_pdfs_to_html"]
+packages = ["pdf_html_toolkit"]
+include-package-data = true
+
+[tool.setuptools.package-data]
+pdf_html_toolkit = ["render_rules.json"]

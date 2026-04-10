@@ -1,0 +1,2 @@
+[console_scripts]
+pdf-html-toolkit = pdf_html_toolkit.__main__:main
