@@ -1,0 +1,14 @@
+{
+  "connection_name": "file-conversions-vps",
+  "host": "your-vps-host",
+  "port": 22,
+  "username": "your-user",
+  "remote_project_dir": "/srv/pdf-html-toolkit",
+  "remote_pdf_input_dir": "/srv/pdfs",
+  "remote_html_output_dir": "/srv/html-output",
+  "remote_rules_path": "/srv/pdf-html-toolkit/render_rules.json",
+  "venv_dir": "/srv/pdf-html-toolkit/.venv",
+  "install_command": "python -m venv /srv/pdf-html-toolkit/.venv && . /srv/pdf-html-toolkit/.venv/bin/activate && pip install pdf_html_toolkit-0.1.0-py3-none-any.whl",
+  "run_command": "pdf-html-toolkit /srv/pdfs --output-root /srv/html-output --rules /srv/pdf-html-toolkit/render_rules.json",
+  "notes": "Store real credentials outside this file. Use this as a template only."
+}

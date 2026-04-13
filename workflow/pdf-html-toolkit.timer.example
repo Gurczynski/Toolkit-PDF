@@ -1,0 +1,10 @@
+[Unit]
+Description=Run PDF HTML Toolkit conversion every 15 minutes
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=15min
+Unit=pdf-html-toolkit.service
+
+[Install]
+WantedBy=timers.target

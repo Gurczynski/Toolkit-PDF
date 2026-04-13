@@ -56,6 +56,32 @@ or:
 python -m pdf_html_toolkit /path/to/pdf-root
 ```
 
+## Lovable / VPS
+
+If you are wiring this package into Lovable or another AI-assisted app builder:
+
+- Use [ai.txt](C:/Users/AV/daytona-page-bundles/pdf_html_toolkit/Toolkit%20PDF/ai.txt) as the machine-readable behavior contract.
+- Use [lovable_prompt.md](C:/Users/AV/daytona-page-bundles/pdf_html_toolkit/Toolkit%20PDF/lovable_prompt.md) as the prompt to paste into Lovable.
+- Copy [vps_connection.example.json](C:/Users/AV/daytona-page-bundles/pdf_html_toolkit/Toolkit%20PDF/vps_connection.example.json) and fill in your real VPS paths and credentials outside source control.
+- Run conversions on the VPS instead of trying to rebuild the renderer in the browser.
+
+Recommended flow:
+
+```bash
+python -m venv .venv
+. .venv/bin/activate
+pip install pdf_html_toolkit-0.1.0-py3-none-any.whl
+pdf-html-toolkit /srv/pdfs --output-root /srv/html-output --rules /srv/pdf-html-toolkit/render_rules.json
+```
+
+Repeatable VPS workflow files are included in [workflow](C:/Users/AV/daytona-page-bundles/pdf_html_toolkit/Toolkit%20PDF/workflow):
+
+- [workflow/WORKFLOW.md](C:/Users/AV/daytona-page-bundles/pdf_html_toolkit/Toolkit%20PDF/workflow/WORKFLOW.md)
+- [workflow/vps.env.example](C:/Users/AV/daytona-page-bundles/pdf_html_toolkit/Toolkit%20PDF/workflow/vps.env.example)
+- [workflow/run_pdf_html_workflow.sh](C:/Users/AV/daytona-page-bundles/pdf_html_toolkit/Toolkit%20PDF/workflow/run_pdf_html_workflow.sh)
+- [workflow/pdf-html-toolkit.service.example](C:/Users/AV/daytona-page-bundles/pdf_html_toolkit/Toolkit%20PDF/workflow/pdf-html-toolkit.service.example)
+- [workflow/pdf-html-toolkit.timer.example](C:/Users/AV/daytona-page-bundles/pdf_html_toolkit/Toolkit%20PDF/workflow/pdf-html-toolkit.timer.example)
+
 ## Usage
 
 Convert every PDF under a directory and write HTML beside each PDF:
