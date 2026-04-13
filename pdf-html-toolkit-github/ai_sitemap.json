@@ -1,0 +1,122 @@
+{
+  "name": "pdf-html-toolkit",
+  "version": "0.1.0",
+  "purpose": "Convert PDFs into repeatable, accessible HTML that visually matches the source PDF page-by-page.",
+  "canonical_entrypoints": {
+    "python_module": "pdf_html_toolkit",
+    "console_script": "pdf-html-toolkit",
+    "core_converter_file": "convert_pdfs_to_html.py",
+    "workflow_runner": "workflow/run_pdf_html_workflow.sh"
+  },
+  "installation": {
+    "package_manager": "pip",
+    "primary_command": "pip install .",
+    "server_clone_path_example": "/srv/pdf-html-toolkit"
+  },
+  "deterministic_rendering_requirements": [
+    "Use the same source PDFs.",
+    "Use the same package version.",
+    "Use the same pinned dependencies in pyproject.toml.",
+    "Use the same render_rules.json file.",
+    "Use the workflow runner instead of ad hoc commands."
+  ],
+  "files": [
+    {
+      "path": "README.md",
+      "role": "Primary project overview and install guide",
+      "required": true
+    },
+    {
+      "path": "GITHUB_SETUP.md",
+      "role": "GitHub-to-server deployment instructions",
+      "required": true
+    },
+    {
+      "path": "pyproject.toml",
+      "role": "Package metadata and pinned runtime dependencies",
+      "required": true
+    },
+    {
+      "path": "requirements.txt",
+      "role": "Dependency reference file",
+      "required": false
+    },
+    {
+      "path": "convert_pdfs_to_html.py",
+      "role": "Core PDF-to-HTML conversion logic",
+      "required": true
+    },
+    {
+      "path": "render_rules.json",
+      "role": "Root deterministic rendering overrides",
+      "required": true
+    },
+    {
+      "path": "pdf_html_toolkit/__init__.py",
+      "role": "Package export surface",
+      "required": true
+    },
+    {
+      "path": "pdf_html_toolkit/__main__.py",
+      "role": "CLI module entry point used by python -m pdf_html_toolkit",
+      "required": true
+    },
+    {
+      "path": "pdf_html_toolkit/render_rules.json",
+      "role": "Bundled default rules distributed with the package",
+      "required": true
+    },
+    {
+      "path": "workflow/WORKFLOW.md",
+      "role": "Canonical VPS workflow documentation",
+      "required": true
+    },
+    {
+      "path": "workflow/vps.env.example",
+      "role": "Template for fixed VPS paths and runtime settings",
+      "required": true
+    },
+    {
+      "path": "workflow/run_pdf_html_workflow.sh",
+      "role": "Canonical repeatable VPS run command",
+      "required": true
+    },
+    {
+      "path": "workflow/pdf-html-toolkit.service.example",
+      "role": "Optional systemd service example",
+      "required": false
+    },
+    {
+      "path": "workflow/pdf-html-toolkit.timer.example",
+      "role": "Optional systemd timer example",
+      "required": false
+    },
+    {
+      "path": "ai.txt",
+      "role": "AI-facing rendering contract and behavioral rules",
+      "required": true
+    },
+    {
+      "path": "lovable_prompt.md",
+      "role": "Prompt file for Lovable or other AI builders",
+      "required": false
+    },
+    {
+      "path": "vps_connection.example.json",
+      "role": "Example VPS connection/config template",
+      "required": false
+    }
+  ],
+  "recommended_server_workflow": [
+    "Clone the repository onto the server.",
+    "Copy workflow/vps.env.example to workflow/vps.env and edit it.",
+    "Run chmod +x workflow/run_pdf_html_workflow.sh.",
+    "Run workflow/run_pdf_html_workflow.sh workflow/vps.env.",
+    "Review pdf_html_review.csv after each conversion run."
+  ],
+  "notes_for_ai": [
+    "Do not redesign PDF output into a generic webpage.",
+    "Preserve page count, page dimensions, inline CSS, transcript markup, and accessibility regions.",
+    "If a PDF renders poorly, adjust render_rules.json instead of changing the visual contract globally."
+  ]
+}

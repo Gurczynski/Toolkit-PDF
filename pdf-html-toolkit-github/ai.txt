@@ -1,0 +1,45 @@
+PDF HTML Toolkit AI Instructions
+
+Purpose:
+- Convert PDFs into accessible HTML that keeps the same page count, page size, reading order, and overall visual layout as the source PDF.
+- Keep output consistent across runs so the same PDF renders the same way each time unless rules or source files change.
+
+Required output rules:
+- Preserve original PDF page dimensions.
+- Keep one HTML page section per PDF page.
+- Use inline CSS and inline JavaScript in generated HTML.
+- Preserve vector drawings as SVG when extraction is reliable.
+- Preserve embedded images at high quality.
+- Use semantic positioned text only when text placement is stable.
+- If positioned text risks overlap, clipping, or fragmentation, prefer preview-image fallback for that page.
+- Always generate a plain-text transcript for each page when machine-readable text exists.
+- Keep per-page accessibility labels, transcript wiring, and keyboard navigation enabled.
+- Do not remove WCAG-oriented labels, page regions, or transcript content.
+
+Deterministic rendering policy:
+- Use the package default rules file unless a project-specific rules file is provided.
+- Respect forced render modes from `render_rules.json`.
+- Do not invent styling unrelated to the PDF source.
+- Do not normalize pages into a generic web layout.
+- Match the PDF look first, then expose accessibility features around it.
+
+VPS workflow:
+- Use the configured VPS connection from File Conversions and tools.
+- Upload the package folder or wheel to the VPS.
+- Install dependencies in a virtual environment.
+- Run the converter on the server near the PDF source files.
+- Write HTML output to a predictable output directory and keep `pdf_html_review.csv`.
+- Prefer the packaged workflow script at `workflow/run_pdf_html_workflow.sh` so server runs stay consistent.
+- Keep a single `workflow/vps.env` file with the fixed input, output, wheel, and rules paths.
+
+Recommended server commands:
+- `python -m venv .venv`
+- `. .venv/bin/activate`
+- `pip install pdf_html_toolkit-0.1.0-py3-none-any.whl`
+- `pdf-html-toolkit /srv/pdfs --output-root /srv/html-output`
+- `/srv/pdf-html-toolkit/workflow/run_pdf_html_workflow.sh /srv/pdf-html-toolkit/workflow/vps.env`
+
+If integrating in Lovable:
+- Treat this package as the source of truth for PDF-to-HTML conversion.
+- Call the package on the VPS instead of re-implementing the renderer in frontend code.
+- Surface the generated HTML output in the app without stripping inline CSS, transcript markup, or accessibility attributes.

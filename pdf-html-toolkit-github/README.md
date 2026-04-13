@@ -1,0 +1,162 @@
+# PDF HTML Toolkit
+
+This folder contains a real installable Python package for the PDF-to-HTML converter used in this workspace.
+
+GitHub deployment notes are in [GITHUB_SETUP.md](C:/Users/AV/daytona-page-bundles/pdf-html-toolkit-github/GITHUB_SETUP.md).
+The machine-readable file map for AI tools is [ai_sitemap.json](C:/Users/AV/daytona-page-bundles/pdf-html-toolkit-github/ai_sitemap.json).
+
+## Files
+
+- `convert_pdfs_to_html.py`
+  Core converter module used by the package and the console command.
+- `pyproject.toml`
+  Package metadata for `pip install`, wheel builds, and console entry points.
+- `pdf_html_toolkit/`
+  Installable Python package wrapper with bundled default rules.
+- `render_rules.json`
+  Stores forced render overrides such as PDFs that should always use preview mode.
+- `requirements.txt`
+  Python dependency list used by the converter.
+- `environment.txt`
+  Runtime versions used on this machine when the files were generated.
+
+## What It Generates
+
+- HTML-only output
+- Inline CSS and inline JavaScript
+- Adobe-like page shell
+- Page navigation, page rail, zoom tools, fit-page, fit-width, actual-size
+- Accessibility tools, transcript panel, return-to-top button
+- Plain-text transcript extraction for each page when machine-readable text exists
+- Hidden per-page accessible text and page descriptions for preview/image pages
+- Semantic positioned text when stable
+- Preview-image fallback when layout fidelity is safer than raw text rendering
+
+## Install
+
+Install from the folder on any server:
+
+```bash
+pip install .
+```
+
+Install from a GitHub clone on the server:
+
+```bash
+git clone <your-github-repo-url> /srv/pdf-html-toolkit
+cd /srv/pdf-html-toolkit
+pip install .
+```
+
+Or build a wheel and install that wheel on another server:
+
+```bash
+pip wheel . --no-deps -w dist
+pip install dist/pdf_html_toolkit-0.1.0-py3-none-any.whl
+```
+
+After install, use either:
+
+```bash
+pdf-html-toolkit /path/to/pdf-root
+```
+
+or:
+
+```bash
+python -m pdf_html_toolkit /path/to/pdf-root
+```
+
+## Lovable / VPS
+
+If you are wiring this package into Lovable or another AI-assisted app builder:
+
+- Use [ai.txt](C:/Users/AV/daytona-page-bundles/pdf_html_toolkit/Toolkit%20PDF/ai.txt) as the machine-readable behavior contract.
+- Use [lovable_prompt.md](C:/Users/AV/daytona-page-bundles/pdf_html_toolkit/Toolkit%20PDF/lovable_prompt.md) as the prompt to paste into Lovable.
+- Copy [vps_connection.example.json](C:/Users/AV/daytona-page-bundles/pdf_html_toolkit/Toolkit%20PDF/vps_connection.example.json) and fill in your real VPS paths and credentials outside source control.
+- Run conversions on the VPS instead of trying to rebuild the renderer in the browser.
+
+Recommended flow:
+
+```bash
+python -m venv .venv
+. .venv/bin/activate
+pip install pdf_html_toolkit-0.1.0-py3-none-any.whl
+pdf-html-toolkit /srv/pdfs --output-root /srv/html-output --rules /srv/pdf-html-toolkit/render_rules.json
+```
+
+Repeatable VPS workflow files are included in [workflow](C:/Users/AV/daytona-page-bundles/pdf_html_toolkit/Toolkit%20PDF/workflow):
+
+- [workflow/WORKFLOW.md](C:/Users/AV/daytona-page-bundles/pdf_html_toolkit/Toolkit%20PDF/workflow/WORKFLOW.md)
+- [workflow/vps.env.example](C:/Users/AV/daytona-page-bundles/pdf_html_toolkit/Toolkit%20PDF/workflow/vps.env.example)
+- [workflow/run_pdf_html_workflow.sh](C:/Users/AV/daytona-page-bundles/pdf_html_toolkit/Toolkit%20PDF/workflow/run_pdf_html_workflow.sh)
+- [workflow/pdf-html-toolkit.service.example](C:/Users/AV/daytona-page-bundles/pdf_html_toolkit/Toolkit%20PDF/workflow/pdf-html-toolkit.service.example)
+- [workflow/pdf-html-toolkit.timer.example](C:/Users/AV/daytona-page-bundles/pdf_html_toolkit/Toolkit%20PDF/workflow/pdf-html-toolkit.timer.example)
+
+## Usage
+
+Convert every PDF under a directory and write HTML beside each PDF:
+
+```powershell
+python .\convert_pdfs_to_html.py C:\path\to\pdf-root
+```
+
+Convert a single PDF:
+
+```powershell
+python .\convert_pdfs_to_html.py C:\path\to\file.pdf
+```
+
+Convert a directory but write output to a separate folder:
+
+```powershell
+python .\convert_pdfs_to_html.py C:\path\to\pdf-root --output-root C:\path\to\html-output
+```
+
+Use a different rules file:
+
+```powershell
+python .\convert_pdfs_to_html.py C:\path\to\pdf-root --rules C:\path\to\render_rules.json
+```
+
+Installed command examples:
+
+```bash
+pdf-html-toolkit /srv/pdfs
+pdf-html-toolkit /srv/pdfs --output-root /srv/html-output
+pdf-html-toolkit /srv/pdfs --rules /srv/render_rules.json
+```
+
+## Rules File
+
+The rules file is JSON with these keys:
+
+```json
+{
+  "force_hybrid_relative_paths": [],
+  "force_image_relative_paths": [],
+  "force_semantic_relative_paths": []
+}
+```
+
+Paths are relative to the input root you pass to the script.
+
+Example:
+
+```json
+{
+  "force_hybrid_relative_paths": [
+    "0002-government/downloaded_files/board-responsibilities-function-guide.pdf"
+  ],
+  "force_image_relative_paths": [],
+  "force_semantic_relative_paths": []
+}
+```
+
+## Notes
+
+- `pdf_html_review.csv` is written to the output root after each run.
+- The converter uses PyMuPDF for layout extraction, vector extraction, image extraction, and rendered fallback previews.
+- The converter also uses `pypdf` to improve page-by-page plain-text transcripts for accessibility tooling.
+- Image-heavy or layout-fragile PDFs are intentionally pushed into preview mode to avoid overlapping or clipped text.
+- The packaged CLI defaults to the current working directory when no input path is provided.

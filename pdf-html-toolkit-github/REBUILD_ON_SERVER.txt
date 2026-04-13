@@ -1,0 +1,154 @@
+PDF HTML TOOLKIT SERVER REBUILD GUIDE
+
+Purpose
+- Rebuild and run the same PDF HTML toolkit on another server with the same package structure, dependencies, workflow, and rendering behavior.
+- Preserve deterministic output so the same input PDFs render the same way each run.
+
+Canonical repo root
+- /srv/pdf-html-toolkit
+
+Canonical input/output paths
+- Input PDFs: /srv/pdfs
+- Output HTML: /srv/html-output
+- Rules file: /srv/pdf-html-toolkit/render_rules.json
+- Workflow env file: /srv/pdf-html-toolkit/workflow/vps.env
+- Workflow runner: /srv/pdf-html-toolkit/workflow/run_pdf_html_workflow.sh
+
+Files required from this repo
+- pyproject.toml
+- convert_pdfs_to_html.py
+- render_rules.json
+- pdf_html_toolkit/__init__.py
+- pdf_html_toolkit/__main__.py
+- pdf_html_toolkit/render_rules.json
+- workflow/WORKFLOW.md
+- workflow/vps.env.example
+- workflow/run_pdf_html_workflow.sh
+- workflow/pdf-html-toolkit.service.example
+- workflow/pdf-html-toolkit.timer.example
+- ai.txt
+- lovable_prompt.md
+- vps_connection.example.json
+
+Pinned runtime versions
+- Python: 3.10 or newer
+- PyMuPDF: 1.26.4
+- pypdf: 4.3.1
+
+What keeps output the same
+- Use the same repo files.
+- Use the same pinned dependency versions from pyproject.toml.
+- Use the same source PDFs.
+- Use the same render_rules.json.
+- Use the same workflow runner instead of ad hoc commands.
+- Do not modify the converter, rules, CSS, or workflow between runs unless you intend to change output.
+
+Server rebuild steps
+
+1. Clone the repo to the server
+- git clone <your-github-repo-url> /srv/pdf-html-toolkit
+- cd /srv/pdf-html-toolkit
+
+2. Create the expected directories
+- mkdir -p /srv/pdfs
+- mkdir -p /srv/html-output
+- mkdir -p /srv/pdf-html-toolkit/logs
+
+3. Create and activate a virtual environment
+- python3 -m venv /srv/pdf-html-toolkit/.venv
+- . /srv/pdf-html-toolkit/.venv/bin/activate
+
+4. Install the package from the repo
+- pip install --upgrade pip
+- pip install .
+
+5. Create the VPS workflow env file
+- cp /srv/pdf-html-toolkit/workflow/vps.env.example /srv/pdf-html-toolkit/workflow/vps.env
+
+6. Edit /srv/pdf-html-toolkit/workflow/vps.env to match the server
+- APP_DIR=/srv/pdf-html-toolkit
+- INPUT_DIR=/srv/pdfs
+- OUTPUT_DIR=/srv/html-output
+- RULES_PATH=/srv/pdf-html-toolkit/render_rules.json
+- WHEEL_PATH=/srv/pdf-html-toolkit/dist/pdf_html_toolkit-0.1.0-py3-none-any.whl
+- PYTHON_BIN=python3
+- VENV_DIR=/srv/pdf-html-toolkit/.venv
+- LOG_DIR=/srv/pdf-html-toolkit/logs
+- LOCK_FILE=/tmp/pdf-html-toolkit.lock
+
+7. Make the workflow runner executable
+- chmod +x /srv/pdf-html-toolkit/workflow/run_pdf_html_workflow.sh
+
+8. Run the workflow
+- /srv/pdf-html-toolkit/workflow/run_pdf_html_workflow.sh /srv/pdf-html-toolkit/workflow/vps.env
+
+What the workflow does
+- creates the Python virtual environment if it does not exist
+- activates the environment
+- upgrades pip
+- installs the wheel if WHEEL_PATH exists, otherwise installs from the repo directory
+- runs the package command:
+  pdf-html-toolkit /srv/pdfs --output-root /srv/html-output --rules /srv/pdf-html-toolkit/render_rules.json
+- writes logs to /srv/pdf-html-toolkit/logs
+- writes /srv/pdf-html-toolkit/logs/latest.log
+- uses a lock file when flock is available to avoid overlapping runs
+
+Direct manual command if needed
+- pdf-html-toolkit /srv/pdfs --output-root /srv/html-output --rules /srv/pdf-html-toolkit/render_rules.json
+
+Expected generated outputs
+- One .html file for each .pdf file
+- pdf_html_review.csv in the output root
+- HTML output with:
+  inline CSS
+  inline JavaScript
+  per-page transcript support
+  accessibility labels and regions
+  semantic text when stable
+  preview fallback when layout fidelity is safer
+
+Deterministic render policy
+- Do not redesign the document into a generic webpage.
+- Preserve original page count and page dimensions.
+- Preserve vectors as SVG when extraction is reliable.
+- Preserve images at source quality.
+- Use semantic positioned text only when stable.
+- If text overlap, clipping, or fragmentation is likely, use preview fallback for that page.
+- Keep transcript markup and accessibility wiring intact.
+
+How to handle problem PDFs without changing global behavior
+- Edit render_rules.json.
+- Add the PDF relative path to one of:
+  force_hybrid_relative_paths
+  force_image_relative_paths
+  force_semantic_relative_paths
+- Rerun the workflow.
+- Do not patch the converter for one-off file issues unless the change is intended for all PDFs.
+
+Verification checklist after rebuild
+- python -m pdf_html_toolkit --help
+- pdf-html-toolkit --help
+- /srv/pdf-html-toolkit/workflow/run_pdf_html_workflow.sh /srv/pdf-html-toolkit/workflow/vps.env
+- confirm HTML files appear in /srv/html-output
+- confirm pdf_html_review.csv exists
+- confirm /srv/pdf-html-toolkit/logs/latest.log exists
+
+Optional automation with systemd
+- Copy workflow/pdf-html-toolkit.service.example to /etc/systemd/system/pdf-html-toolkit.service
+- Copy workflow/pdf-html-toolkit.timer.example to /etc/systemd/system/pdf-html-toolkit.timer
+- Run:
+  sudo systemctl daemon-reload
+  sudo systemctl enable --now pdf-html-toolkit.timer
+
+Files that explain behavior to AI or automation tools
+- ai.txt
+- ai_sitemap.json
+- lovable_prompt.md
+- workflow/WORKFLOW.md
+
+If you want exact output parity with the current environment
+- use the same repo commit
+- use the same Python major/minor version
+- use the same pinned dependency versions
+- use the same render_rules.json
+- use the same source PDFs without modification

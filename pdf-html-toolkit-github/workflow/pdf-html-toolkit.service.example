@@ -1,0 +1,13 @@
+[Unit]
+Description=PDF HTML Toolkit conversion workflow
+After=network.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/srv/pdf-html-toolkit
+ExecStart=/srv/pdf-html-toolkit/workflow/run_pdf_html_workflow.sh /srv/pdf-html-toolkit/workflow/vps.env
+User=www-data
+Group=www-data
+
+[Install]
+WantedBy=multi-user.target
